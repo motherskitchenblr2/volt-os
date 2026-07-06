@@ -1,5 +1,8 @@
 <div align="center">
 
+<!-- ===== VOLT OS BANNER ===== -->
+<img src="assets/banner.png" alt="VOLT OS — AI Workforce Operating System" width="100%" style="border-radius: 12px; margin-bottom: 24px; border: 1px solid rgba(59,130,246,0.2);" />
+
 <!-- ===== VOLT OS Brand Mark ===== -->
 <table cellpadding="0" cellspacing="0" style="margin: 0 auto 24px; border: none;">
   <tr>
