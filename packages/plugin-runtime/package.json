@@ -1,0 +1,33 @@
+{
+  "name": "@volt-os/plugin-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VOLT OS — Plugin runtime with strict SDK-only access, sandboxed execution, and lifecycle management",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "pino": "^9.0.0",
+    "semver": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "@types/semver": "^7.5.8",
+    "@vitest/coverage-v8": "^4.1.10",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}

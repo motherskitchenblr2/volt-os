@@ -1,0 +1,29 @@
+{
+  "id": "memory-plugin",
+  "name": "Memory Plugin",
+  "version": "1.0.0",
+  "author": "VOLT OS Team",
+  "description": "Example plugin demonstrating memory read/write through the VoltSDK.",
+  "category": "memory",
+  "permissions": [
+    {
+      "type": "memory",
+      "access": "read",
+      "scope": "project"
+    },
+    {
+      "type": "memory",
+      "access": "write",
+      "scope": "project"
+    }
+  ],
+  "capabilities": ["memory-read", "memory-write"],
+  "events": {
+    "subscribe": [],
+    "publish": ["memory.updated"]
+  },
+  "minimumVoltVersion": "0.1.0",
+  "sdkVersion": "1.0.0",
+  "checksum": "",
+  "entryPoint": "./index.js"
+}

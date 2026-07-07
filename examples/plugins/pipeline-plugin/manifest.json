@@ -1,0 +1,29 @@
+{
+  "id": "pipeline-plugin",
+  "name": "Pipeline Plugin",
+  "version": "1.0.0",
+  "author": "VOLT OS Team",
+  "description": "Example plugin that subscribes to pipeline events and logs stage transitions.",
+  "category": "integration",
+  "permissions": [
+    {
+      "type": "event",
+      "access": "subscribe",
+      "targets": ["pipeline.*"]
+    },
+    {
+      "type": "event",
+      "access": "publish",
+      "targets": ["pipeline.audit.*"]
+    }
+  ],
+  "capabilities": ["pipeline-monitor"],
+  "events": {
+    "subscribe": ["pipeline.stage.started", "pipeline.stage.completed", "pipeline.stage.failed"],
+    "publish": ["pipeline.audit.logged"]
+  },
+  "minimumVoltVersion": "0.1.0",
+  "sdkVersion": "1.0.0",
+  "checksum": "",
+  "entryPoint": "./index.js"
+}

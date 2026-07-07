@@ -1,0 +1,18 @@
+{
+  "id": "hello-plugin",
+  "name": "Hello Plugin",
+  "version": "1.0.0",
+  "author": "VOLT OS Team",
+  "description": "Minimal example plugin demonstrating the VoltSDK interface and plugin lifecycle.",
+  "category": "integration",
+  "permissions": [],
+  "capabilities": ["greet"],
+  "events": {
+    "subscribe": ["plugin.activated"],
+    "publish": ["plugin.greeting"]
+  },
+  "minimumVoltVersion": "0.1.0",
+  "sdkVersion": "1.0.0",
+  "checksum": "",
+  "entryPoint": "./index.js"
+}
