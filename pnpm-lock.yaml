@@ -150,6 +150,40 @@ importers:
         specifier: ^2.1.9
         version: 2.1.9(@types/node@22.20.0)
 
+  packages/sdk:
+    dependencies:
+      '@volt-os/agent-runtime':
+        specifier: workspace:*
+        version: link:../agent-runtime
+      '@volt-os/event-bus':
+        specifier: workspace:*
+        version: link:../event-bus
+      '@volt-os/memory-engine':
+        specifier: workspace:*
+        version: link:../memory-engine
+      '@volt-os/model-router':
+        specifier: workspace:*
+        version: link:../model-router
+      '@volt-os/pipeline-engine':
+        specifier: workspace:*
+        version: link:../pipeline-engine
+      '@volt-os/plugin-runtime':
+        specifier: workspace:*
+        version: link:../plugin-runtime
+      '@volt-os/security-engine':
+        specifier: workspace:*
+        version: link:../security-engine
+      '@volt-os/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@22.20.0)
+
   packages/security-engine:
     dependencies:
       '@volt-os/config':

@@ -1,0 +1,34 @@
+{
+  "name": "@volt/sdk",
+  "version": "1.0.0",
+  "private": false,
+  "description": "VOLT OS — Official Developer SDK",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@volt-os/shared": "workspace:*",
+    "@volt-os/event-bus": "workspace:*",
+    "@volt-os/pipeline-engine": "workspace:*",
+    "@volt-os/plugin-runtime": "workspace:*",
+    "@volt-os/agent-runtime": "workspace:*",
+    "@volt-os/memory-engine": "workspace:*",
+    "@volt-os/model-router": "workspace:*",
+    "@volt-os/security-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}
