@@ -1,66 +1,131 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
+import { useDashboardStore } from '@/stores/dashboard-store';
 import type { Event } from '@/lib/types';
 
+/** Maximum reconnect delay in milliseconds */
+const MAX_RECONNECT_DELAY = 5000;
+
+/** Base delay doubling sequence (1s → 2s → 4s → capped at 5s) */
+const RECONNECT_DELAYS = [1000, 2000, 4000, MAX_RECONNECT_DELAY];
+
 interface UseWebSocketReturn {
-  events: Event[];
   isConnected: boolean;
+  reconnectAttempt: number;
   error: string | null;
 }
 
 export function useWebSocket(): UseWebSocketReturn {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const addEvent = useDashboardStore((s) => s.addEvent);
+
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectAttemptRef = useRef(0);
+  const mountedRef = useRef(true);
+
+  // Stable reactive state via store subscriptions not needed here;
+  // expose minimal state via refs that consumers can read.
+  const isConnectedRef = useRef(false);
+  const errorRef = useRef<string | null>(null);
+
+  // We use a force-render hook so React re-renders when connection state changes
+  const [, forceRender] = useRef<number>(0);
+
+  const cleanup = useCallback(() => {
+    if (wsRef.current) {
+      wsRef.current.onopen = null;
+      wsRef.current.onmessage = null;
+      wsRef.current.onclose = null;
+      wsRef.current.onerror = null;
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    if (reconnectTimeoutRef.current) {
+      clearTimeout(reconnectTimeoutRef.current);
+      reconnectTimeoutRef.current = null;
+    }
+  }, []);
 
   const connect = useCallback(() => {
+    if (!mountedRef.current) return;
+
+    cleanup();
+
     try {
-      const ws = new WebSocket('ws://localhost:3333/ws');
+      const wsUrl =
+        typeof window !== 'undefined'
+          ? `ws://${window.location.hostname}:3333/ws`
+          : 'ws://localhost:3333/ws';
+
+      const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        setIsConnected(true);
-        setError(null);
+        if (!mountedRef.current) return;
+        isConnectedRef.current = true;
+        errorRef.current = null;
+        reconnectAttemptRef.current = 0;
+        // Trigger re-render
+        forceRender((prev) => prev + 1);
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = (message) => {
+        if (!mountedRef.current) return;
         try {
-          const data = JSON.parse(event.data) as Event;
-          setEvents((prev) => [data, ...prev].slice(0, 100));
+          const data = JSON.parse(message.data) as Event;
+          addEvent(data);
         } catch {
-          console.error('Failed to parse WebSocket message');
+          console.error('[ws] Failed to parse message');
         }
       };
 
       ws.onclose = () => {
-        setIsConnected(false);
-        reconnectTimeoutRef.current = setTimeout(connect, 5000);
+        if (!mountedRef.current) return;
+        isConnectedRef.current = false;
+        forceRender((prev) => prev + 1);
+        scheduleReconnect();
       };
 
       ws.onerror = () => {
-        setError('WebSocket connection failed');
+        if (!mountedRef.current) return;
+        errorRef.current = 'WebSocket connection error';
+        forceRender((prev) => prev + 1);
         ws.close();
       };
-    } catch (err) {
-      setError('Failed to establish WebSocket connection');
+    } catch {
+      if (!mountedRef.current) return;
+      errorRef.current = 'Failed to create WebSocket';
+      forceRender((prev) => prev + 1);
+      scheduleReconnect();
     }
-  }, []);
+  }, [addEvent, cleanup]);
+
+  const scheduleReconnect = useCallback(() => {
+    if (!mountedRef.current) return;
+    const attempt = reconnectAttemptRef.current;
+    const delay = RECONNECT_DELAYS[Math.min(attempt, RECONNECT_DELAYS.length - 1)];
+    reconnectAttemptRef.current = attempt + 1;
+
+    reconnectTimeoutRef.current = setTimeout(() => {
+      connect();
+    }, delay);
+  }, [connect]);
 
   useEffect(() => {
+    mountedRef.current = true;
     connect();
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
+      mountedRef.current = false;
+      cleanup();
     };
-  }, [connect]);
+  }, [connect, cleanup]);
 
-  return { events, isConnected, error };
+  // Expose state via a simple object; consumers use this hook.
+  return {
+    isConnected: isConnectedRef.current,
+    reconnectAttempt: reconnectAttemptRef.current,
+    error: errorRef.current,
+  };
 }

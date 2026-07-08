@@ -1,29 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/sidebar';
 import { StatusBadge } from '@/components/status-badge';
 import { DataTable } from '@/components/data-table';
-import { api } from '@/lib/api';
+import { ErrorBoundary } from '@/components/error-boundary';
+import { LoadingSpinner } from '@/components/loading-spinner';
+import { useAgentsQuery } from '@/lib/api';
 import type { Agent } from '@/lib/types';
 
 export default function AgentsPage() {
-  const [agents, setAgents] = useState<Agent[]>([]);
-
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const data = await api.getAgents();
-        setAgents(data as Agent[]);
-      } catch {
-        console.error('Failed to fetch agents');
-      }
-    };
-
-    fetchAgents();
-    const interval = setInterval(fetchAgents, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const { data: agents = [], isLoading } = useAgentsQuery();
 
   const columns = [
     {
@@ -32,19 +18,25 @@ export default function AgentsPage() {
       render: (agent: Agent) => (
         <div>
           <div className="font-medium">{agent.name}</div>
-          <div className="text-[10px] text-muted-foreground font-mono">{agent.id.slice(0, 8)}</div>
+          <div className="text-[10px] text-muted-foreground font-mono">
+            {agent.id.slice(0, 8)}
+          </div>
         </div>
       ),
     },
     {
       key: 'status',
       label: 'Status',
-      render: (agent: Agent) => <StatusBadge status={agent.status} size="sm" />,
+      render: (agent: Agent) => (
+        <StatusBadge status={agent.status} size="sm" />
+      ),
     },
     {
       key: 'health',
       label: 'Health',
-      render: (agent: Agent) => <StatusBadge status={agent.health} size="sm" />,
+      render: (agent: Agent) => (
+        <StatusBadge status={agent.health} size="sm" />
+      ),
     },
     {
       key: 'lastExecution',
@@ -87,16 +79,26 @@ export default function AgentsPage() {
       <main className="flex-1 ml-56 p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Agents</h1>
-          <p className="text-sm text-muted-foreground mt-1">Agent registry and status</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Agent registry and status
+          </p>
         </div>
 
-        <div className="bg-card border border-border rounded-md">
-          <DataTable
-            columns={columns}
-            data={agents as unknown as Record<string, unknown>[]}
-            emptyMessage="No agents registered"
-          />
-        </div>
+        <ErrorBoundary>
+          {isLoading ? (
+            <LoadingSpinner label="Loading agents…" />
+          ) : (
+            <div className="bg-card border border-border rounded-md">
+              <DataTable
+                columns={columns}
+                data={
+                  agents as unknown as Record<string, unknown>[]
+                }
+                emptyMessage="No agents registered"
+              />
+            </div>
+          )}
+        </ErrorBoundary>
       </main>
     </div>
   );
