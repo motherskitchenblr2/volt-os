@@ -1,0 +1,25 @@
+{
+  "name": "@volt/vertical-slice",
+  "version": "0.2.0-alpha",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "e2e": "vitest run --config vitest.e2e.config.ts",
+    "demo": "tsx src/demo.ts"
+  },
+  "dependencies": {
+    "@volt-os/shared": "workspace:*",
+    "@volt-os/event-bus": "workspace:*",
+    "@volt-os/pipeline-engine": "workspace:*",
+    "@volt-os/plugin-runtime": "workspace:*",
+    "@volt-os/agent-runtime": "workspace:*",
+    "@volt-os/memory-engine": "workspace:*",
+    "@volt-os/model-router": "workspace:*",
+    "@volt-os/security-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "tsx": "^4.7.0"
+  }
+}
