@@ -1,5 +1,6 @@
 """VOLT OS — Memory Service. Multi-level memory with RAG retrieval."""
 from sqlalchemy.orm import Session
+from sqlalchemy import Text
 from src.memory.models import MemoryEntry, DecisionRecord, MemoryLevel
 from src.core.events import EventBus
 import redis
