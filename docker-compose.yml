@@ -1,38 +1,65 @@
-# VOLT OS — Development environment
-version: "3.8"
+version: '3.8'
 
 services:
   postgres:
-    image: pgvector/pgvector:pg16
+    image: postgres:16-alpine
     environment:
-      POSTGRES_USER: volt
-      POSTGRES_PASSWORD: volt
       POSTGRES_DB: volt_os
+      POSTGRES_USER: volt
+      POSTGRES_PASSWORD: dev_password
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U volt -d volt_os"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://volt:volt@postgres:5432/volt_os
+      DATABASE_URL: postgresql://volt:dev_password@postgres:5432/volt_os
       REDIS_URL: redis://redis:6379
-      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY}
-      CLERK_PUBLISHABLE_KEY: ${CLERK_PUBLISHABLE_KEY}
+      NODE_ENV: development
     depends_on:
-      - postgres
-      - redis
-    volumes:
-      - ./backend:/app
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mission-control:
+    build:
+      context: ./packages/mission-control
+      dockerfile: Dockerfile
+    ports:
+      - "3333:3333"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+      NEXT_PUBLIC_WS_URL: ws://localhost:3000
 
 volumes:
-  pgdata:
+  postgres_data:
+  redis_data:
