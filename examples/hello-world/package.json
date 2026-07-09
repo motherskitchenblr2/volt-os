@@ -1,0 +1,15 @@
+{
+  "name": "volt-hello-world",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "dependencies": {
+    "@volt/sdk": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}
