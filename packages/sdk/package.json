@@ -18,17 +18,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@volt-os/shared": "workspace:*",
-    "@volt-os/event-bus": "workspace:*",
-    "@volt-os/pipeline-engine": "workspace:*",
-    "@volt-os/plugin-runtime": "workspace:*",
     "@volt-os/agent-runtime": "workspace:*",
+    "@volt-os/event-bus": "workspace:*",
     "@volt-os/memory-engine": "workspace:*",
     "@volt-os/model-router": "workspace:*",
-    "@volt-os/security-engine": "workspace:*"
+    "@volt-os/pipeline-engine": "workspace:*",
+    "@volt-os/plugin-runtime": "workspace:*",
+    "@volt-os/security-engine": "workspace:*",
+    "@volt-os/shared": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
-    "vitest": "^2.1.9"
+    "vitest": "^3.2.7"
   }
 }
