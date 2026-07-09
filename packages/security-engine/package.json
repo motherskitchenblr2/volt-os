@@ -20,16 +20,16 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@volt-os/shared": "workspace:*",
-    "@volt-os/event-bus": "workspace:*",
     "@volt-os/config": "workspace:*",
-    "pino": "^9.0.0",
-    "jose": "^6.0.0"
+    "@volt-os/event-bus": "workspace:*",
+    "@volt-os/shared": "workspace:*",
+    "jose": "^6.0.0",
+    "pino": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",
     "@vitest/coverage-v8": "^4.1.10",
     "typescript": "^5.9.3",
-    "vitest": "^2.1.9"
+    "vitest": "^3.2.7"
   }
 }
