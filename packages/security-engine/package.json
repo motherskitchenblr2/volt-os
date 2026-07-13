@@ -24,7 +24,7 @@
     "@volt-os/event-bus": "workspace:*",
     "@volt-os/shared": "workspace:*",
     "jose": "^6.0.0",
-    "pino": "^9.0.0"
+    "pino": "^10.3.1"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",
