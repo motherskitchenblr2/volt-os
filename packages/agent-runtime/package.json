@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@volt-os/plugin-runtime": "workspace:*",
-    "pino": "^9.0.0"
+    "pino": "^10.3.1"
   },
   "devDependencies": {
     "@types/node": "^22.20.0",
